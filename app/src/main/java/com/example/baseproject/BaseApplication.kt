@@ -5,17 +5,15 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
-
-abstract class BaseApplication: Application() {
+abstract class BaseApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        startKoin{
+        startKoin {
             androidContext(this@BaseApplication)
             modules(appModule())
         }
     }
 
-    open fun appModule() =
-        module {  }
+    open fun appModule() = module { }
 }
