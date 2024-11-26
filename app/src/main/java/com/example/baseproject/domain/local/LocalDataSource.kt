@@ -1,4 +1,6 @@
-package com.example.baseproject.data.local
+package com.example.baseproject.domain.local
+
+import com.example.baseproject.data.BaseEntity
 
 interface LocalDataSource<E : BaseEntity> {
     suspend fun insert(entity: E)

@@ -28,7 +28,7 @@ class EncryptedSharedPreferences(context: Context) {
     fun putData(
         key: String,
         value: Any?,
-    )  {
+    ) {
         when (value) {
             is String -> pref.edit().putString(key, value).apply()
             is Int -> pref.edit().putInt(key, value).apply()
@@ -42,7 +42,7 @@ class EncryptedSharedPreferences(context: Context) {
     fun setData(
         key: String,
         value: Any?,
-    ): Any?  {
+    ): Any? {
         return when (value) {
             is String -> pref.getString(key, null)
             is Int -> pref.getInt(key, 0)

@@ -1,9 +1,8 @@
-package com.example.baseproject.data.local
+package com.example.baseproject.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.baseproject.data.BaseModel
 
 @Entity
 open class BaseEntity(

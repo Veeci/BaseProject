@@ -1,4 +1,4 @@
-package com.example.baseproject.data.remote.network.interceptors
+package com.example.baseproject.domain.remote.network.interceptors
 
 import android.content.Context
 import android.net.ConnectivityManager

@@ -1,3 +1,3 @@
 package com.example.baseproject.presentation
 
-class BaseFragment
+class BaseDialog

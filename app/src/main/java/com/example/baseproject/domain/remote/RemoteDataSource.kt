@@ -1,4 +1,6 @@
-package com.example.baseproject.data.remote
+package com.example.baseproject.domain.remote
+
+import com.example.baseproject.data.BaseDTO
 
 interface RemoteDataSource<D : BaseDTO> {
     suspend fun insert(dto: D)

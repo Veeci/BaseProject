@@ -1,8 +1,7 @@
-package com.example.baseproject.data.remote
+package com.example.baseproject.data
 
 import android.os.Parcelable
 import androidx.annotation.Keep
-import com.example.baseproject.data.BaseModel
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
