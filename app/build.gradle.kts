@@ -61,4 +61,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+
+    // Encrypted shared preferences
+    implementation(libs.androidx.security.crypto)
 }

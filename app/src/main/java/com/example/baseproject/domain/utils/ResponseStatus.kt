@@ -1,4 +1,4 @@
-package com.example.baseproject.data.remote.network
+package com.example.baseproject.domain.utils
 
 sealed class ResponseStatus<out T> {
     data class Success<out T>(val data: T) : ResponseStatus<T>()

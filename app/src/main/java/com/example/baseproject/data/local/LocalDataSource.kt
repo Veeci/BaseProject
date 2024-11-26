@@ -1,11 +1,15 @@
 package com.example.baseproject.data.local
 
-class LocalDataSource<BaseEntity>(private val dao: BaseDAO<BaseEntity>) {
-    suspend fun insert(entity: BaseEntity) = dao.insert(entity)
+interface LocalDataSource<E : BaseEntity> {
+    suspend fun insert(entity: E)
 
-    suspend fun insert(entities: List<BaseEntity>) = dao.insert(entities)
+    suspend fun insert(entities: List<E>)
 
-    suspend fun update(entity: BaseEntity) = dao.update(entity)
+    suspend fun getAll(): List<E>
 
-    suspend fun delete(entity: BaseEntity) = dao.delete(entity)
+    suspend fun update(entity: E)
+
+    suspend fun delete(entity: E)
+
+    suspend fun findByID(id: String): E?
 }

@@ -1,15 +1,15 @@
 package com.example.baseproject.data.remote
 
-class RemoteDataSource<BaseModel>(private val api: BaseAPI<BaseModel>) {
-    suspend fun insert(dto: BaseModel): BaseModel = api.insert(dto)
+interface RemoteDataSource<D : BaseDTO> {
+    suspend fun insert(dto: D)
 
-    suspend fun insert(dtos: List<BaseModel>) = api.insert(dtos)
+    suspend fun insert(dtos: List<D>)
 
-    suspend fun update(dto: BaseModel) {
-        api.update(dto)
-    }
+    suspend fun getAll(): List<D>
 
-    suspend fun delete(dto: BaseModel) {
-        api.delete(dto)
-    }
+    suspend fun update(dto: D)
+
+    suspend fun delete(dto: D)
+
+    suspend fun findByID(id: String): D?
 }
