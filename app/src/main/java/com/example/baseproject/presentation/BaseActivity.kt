@@ -1,18 +1,43 @@
 package com.example.baseproject.presentation
 
+import android.app.PendingIntent
+import android.content.Intent
+import android.graphics.drawable.Icon
+import android.os.Build
 import android.os.Bundle
+import android.service.chooser.ChooserAction
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.navOptions
 import androidx.viewbinding.ViewBinding
 import com.example.baseproject.R
 import com.example.baseproject.databinding.ActivityBaseBinding
+import com.example.baseproject.domain.utils.LogUtils
 import com.example.baseproject.domain.utils.NetworkUtil
 import com.example.baseproject.domain.utils.ThemeManager
 import com.example.baseproject.domain.utils.ThemeMode
 import com.example.baseproject.domain.utils.toastShort
+import com.example.baseproject.presentation.navigation.BackToHome
 import com.example.baseproject.presentation.navigation.BaseNavigator
+import com.example.baseproject.presentation.navigation.ComingSoon
+import com.example.baseproject.presentation.navigation.InvalidLocalTime
+import com.example.baseproject.presentation.navigation.NavigateWithDeeplink
+import com.example.baseproject.presentation.navigation.NavigationEvent
+import com.example.baseproject.presentation.navigation.NextScreen
+import com.example.baseproject.presentation.navigation.NoInternet
+import com.example.baseproject.presentation.navigation.NotImplementedYet
+import com.example.baseproject.presentation.navigation.NotImplementedYet.extras
+import com.example.baseproject.presentation.navigation.PermissionResultEvent
+import com.example.baseproject.presentation.navigation.PopScreen
+import com.example.baseproject.presentation.navigation.SessionTimeout
+import com.example.baseproject.presentation.navigation.ShareFile
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 abstract class BaseActivity<V : ViewBinding, N : BaseNavigator>(private val layoutId: Int) :
@@ -33,8 +58,179 @@ abstract class BaseActivity<V : ViewBinding, N : BaseNavigator>(private val layo
         enableEdgeToEdge()
         rootView = DataBindingUtil.inflate(layoutInflater, R.layout.activity_base, null, false)
         binding = DataBindingUtil.inflate(layoutInflater, layoutId, null, false)
-
+//        navController = (supportFragmentManager.findFragmentById() as NavHostFragment).navController
         setContentView(rootView.root)
+
+        checkNetwork()
+        onNavigationEvent()
+
+        initView(savedInstanceState = savedInstanceState, binding = binding)
+    }
+
+    private fun onNavigationEvent() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                for (event in navigator.receive) {
+                    onNavigationEvent(event = event)
+                }
+            }
+        }
+    }
+
+    open fun onNavigationEvent(event: NavigationEvent) {
+        when (event) {
+            is NextScreen -> {
+                try {
+                    navController?.navigate(
+                        resId = event.action,
+                        args = event.extras,
+                        navOptions =
+                            navOptions {
+                                anim {
+                                    enter = event.enterAnim ?: android.R.anim.fade_in
+                                    exit = event.exitAnim ?: android.R.anim.fade_out
+                                    popEnter = event.popEnterAnim ?: android.R.anim.fade_in
+                                    popExit = event.popExitAnim ?: android.R.anim.fade_out
+                                }
+                                if (event.extras.getBoolean("isFinished", false)) {
+                                    launchSingleTop = true
+                                    popUpTo(resources.getString(R.string.base_project)) {
+                                        inclusive = true
+                                        saveState = true
+                                    }
+                                }
+                            },
+                    )
+                } catch (e: Exception) {
+                    LogUtils.log("onNextScreen navigation error!", "Navigation Error: ${e.message}")
+                }
+            }
+
+            is PopScreen -> {
+                try {
+                    navController?.let { navController ->
+                        if (navController.previousBackStackEntry != null &&
+                            navController.currentBackStackEntry != null
+                        ) {
+                            navController.popBackStack(
+                                destinationId = event.action,
+                                inclusive = event.inclusive != false,
+                                saveState = event.saveState == false,
+                            )
+                        } else {
+                            LogUtils.log("onPopScreen navigation error!", "Navigation Error: BackStack is empty")
+                        }
+                    } ?: run {
+                        navController?.popBackStack()
+                    }
+                } catch (e: Exception) {
+                    LogUtils.log("onPopScreen navigation error!", "Navigation Error: ${e.message}")
+                }
+            }
+
+            is BackToHome -> {
+                try {
+                    // todo
+                } catch (e: Exception) {
+                    LogUtils.log("onBackToHome navigation error!", "Navigation Error: ${e.message}")
+                }
+            }
+
+            is NavigateWithDeeplink -> {
+                try {
+                    // todo
+                } catch (e: Exception) {
+                    LogUtils.log("onNavigateWithDeeplink navigation error!", "Navigation Error: ${e.message}")
+                }
+            }
+
+            is ShareFile -> {
+                try {
+                    val sendIntent = Intent(Intent.ACTION_SEND).setType("*/*")
+                    val contentUri = extras?.getString(ShareFile.EXTRA)?.toUri()
+                    sendIntent.apply {
+                        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        extras?.getString(ShareFile.LINK)?.let {
+                            putExtra(Intent.EXTRA_TEXT, extras?.getString(ShareFile.LINK))
+                        }
+                        contentUri?.let {
+                            data = contentUri
+                            putExtra(Intent.EXTRA_STREAM, contentUri)
+                        }
+                    }
+
+                    val shareIntent =
+                        Intent.createChooser(sendIntent, extras?.getString(ShareFile.TITLE))
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        val customActions =
+                            arrayOf(
+                                ChooserAction.Builder(
+                                    Icon.createWithResource(this, R.drawable.ic_edit_base),
+                                    "Custom",
+                                    PendingIntent.getBroadcast(
+                                        this,
+                                        1,
+                                        Intent(Intent.ACTION_VIEW),
+                                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT,
+                                    ),
+                                ).build(),
+                            )
+                        shareIntent.putExtra(Intent.EXTRA_CHOOSER_CUSTOM_ACTIONS, customActions)
+                    }
+                    startActivity(shareIntent)
+                } catch (e: Exception) {
+                    LogUtils.log("onShareFile navigation error!", "Navigation Error: ${e.message}")
+                }
+            }
+
+            is ComingSoon -> {
+                try {
+                    // todo
+                } catch (e: Exception) {
+                    LogUtils.log("onComingSoon navigation error!", "Navigation Error: ${e.message}")
+                }
+            }
+
+            is SessionTimeout -> {
+                try {
+                    // todo
+                } catch (e: Exception) {
+                    LogUtils.log("onSessionTimeout navigation error!", "Navigation Error: ${e.message}")
+                }
+            }
+
+            is NoInternet -> {
+                try {
+                    // todo
+                } catch (e: Exception) {
+                    LogUtils.log("onNoInternet navigation error!", "Navigation Error: ${e.message}")
+                }
+            }
+
+            is InvalidLocalTime -> {
+                try {
+                    // todo
+                } catch (e: Exception) {
+                    LogUtils.log("onInvalidLocalTime navigation error!", "Navigation Error: ${e.message}")
+                }
+            }
+
+            is PermissionResultEvent -> {
+                onPermissionResult?.invoke(event.requestCode, event.permissions, event.grantResults, event.deviceId)
+            }
+
+            is NotImplementedYet -> {
+                try {
+                    // todo
+                } catch (e: Exception) {
+                    LogUtils.log(
+                        "onNotImplementedYet navigation error!",
+                        "Navigation Error: ${e.message}",
+                    )
+                }
+            }
+        }
     }
 
     private fun checkNetwork() {

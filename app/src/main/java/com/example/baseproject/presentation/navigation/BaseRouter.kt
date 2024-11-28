@@ -52,7 +52,10 @@ interface BaseRouter {
         extras: Bundle?,
     )
 
-    fun onErrorEvent(message: String?)
+    fun onErrorEvent(
+        action: Int,
+        message: String?,
+    )
 
     fun onPermissionResultEvent(
         requestCode: Int,

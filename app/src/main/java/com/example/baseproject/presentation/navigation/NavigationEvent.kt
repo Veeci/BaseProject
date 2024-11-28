@@ -77,7 +77,8 @@ data class OtherError(
     override val extras: Bundle? = null,
 ) : NavigationEvent()
 
-class ErrorEvent(
+data class ErrorEvent(
+    override val action: Int = 0,
     val message: String? = null,
 ) : NavigationEvent()
 

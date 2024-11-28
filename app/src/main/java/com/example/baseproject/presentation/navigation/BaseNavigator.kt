@@ -37,7 +37,7 @@ open class BaseNavigator : BaseViewModel(), BaseRouter {
         action: Int?,
         inclusive: Boolean?,
         saveState: Boolean?,
-    )  {
+    ) {
         sendEvent(
             PopScreen(
                 action = action ?: -1,
@@ -100,8 +100,11 @@ open class BaseNavigator : BaseViewModel(), BaseRouter {
         sendEvent(OtherError(action, extras))
     }
 
-    override fun onErrorEvent(message: String?) {
-        ErrorEvent(message)
+    override fun onErrorEvent(
+        action: Int,
+        message: String?,
+    ) {
+        sendEvent(ErrorEvent(action, message))
     }
 
     override fun onPermissionResultEvent(
