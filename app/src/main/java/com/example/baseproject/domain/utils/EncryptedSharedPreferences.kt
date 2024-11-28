@@ -25,7 +25,7 @@ class EncryptedSharedPreferences(context: Context) {
             )
     }
 
-    fun putData(
+    fun setData(
         key: String,
         value: Any?,
     ) {
@@ -39,7 +39,7 @@ class EncryptedSharedPreferences(context: Context) {
         }
     }
 
-    fun setData(
+    fun getData(
         key: String,
         value: Any?,
     ): Any? {

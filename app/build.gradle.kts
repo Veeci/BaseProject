@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.example.baseproject"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.baseproject"
@@ -29,6 +29,10 @@ android {
                 "proguard-rules.pro",
             )
         }
+    }
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

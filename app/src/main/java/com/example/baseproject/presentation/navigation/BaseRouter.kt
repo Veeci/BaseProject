@@ -6,13 +6,14 @@ interface BaseRouter {
     fun onNextScreen(
         action: Int,
         extras: Bundle = Bundle(),
-    ): Boolean
+        isFinished: Boolean?,
+    )
 
     fun onPopScreen(
         action: Int? = null,
         inclusive: Boolean? = null,
         saveState: Boolean? = null,
-    ): Boolean
+    )
 
     fun backToHome(
         action: Int,

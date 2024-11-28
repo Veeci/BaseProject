@@ -16,54 +16,35 @@ open class BaseNavigator : BaseViewModel(), BaseRouter {
         }
     }
 
-    fun offNavScreen(
+    override fun onNextScreen(
         action: Int,
-        extras: android.os.Bundle = android.os.Bundle(),
-        isFinished: Boolean = false,
+        extras: Bundle,
+        isFinished: Boolean?,
     ) {
         launchCoroutine {
             navigation.send(
                 NextScreen(
                     action,
                     extras.apply {
-                        putBoolean("isFinished", isFinished)
+                        putBoolean("isFinished", isFinished ?: false)
                     },
                 ),
             )
         }
     }
 
-    fun offNavScreen(
-        nextScreen: NextScreen,
-        isFinished: Boolean = false,
-    ) {
-        launchCoroutine {
-            navigation.send(
-                nextScreen.copy(
-                    extras =
-                        nextScreen.extras.apply {
-                            putBoolean("isFinished", isFinished)
-                        },
-                ),
-            )
-        }
-    }
-
-    override fun onNextScreen(
-        action: Int,
-        extras: android.os.Bundle,
-    ): Boolean {
-        offNavScreen(action, extras)
-        return true
-    }
-
     override fun onPopScreen(
         action: Int?,
         inclusive: Boolean?,
         saveState: Boolean?,
-    ): Boolean {
-        sendEvent(PopScreen(action = action ?: -1, inclusive = inclusive, saveState = saveState))
-        return true
+    )  {
+        sendEvent(
+            PopScreen(
+                action = action ?: -1,
+                inclusive = inclusive,
+                saveState = saveState,
+            ),
+        )
     }
 
     override fun backToHome(
@@ -100,14 +81,14 @@ open class BaseNavigator : BaseViewModel(), BaseRouter {
 
     override fun onNoInternet(
         action: Int,
-        extras: android.os.Bundle?,
+        extras: Bundle?,
     ) {
         sendEvent(NoInternet(action, extras))
     }
 
     override fun onInvalidLocalTime(
         action: Int,
-        extras: android.os.Bundle?,
+        extras: Bundle?,
     ) {
         sendEvent(InvalidLocalTime(action, extras))
     }
@@ -129,7 +110,14 @@ open class BaseNavigator : BaseViewModel(), BaseRouter {
         grantResults: IntArray,
         deviceId: Int,
     ) {
-        sendEvent(PermissionResultEvent(requestCode, permissions, grantResults, deviceId))
+        sendEvent(
+            PermissionResultEvent(
+                requestCode,
+                permissions,
+                grantResults,
+                deviceId,
+            ),
+        )
     }
 
     override fun notImplemented() {
