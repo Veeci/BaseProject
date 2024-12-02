@@ -10,11 +10,18 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.ImageView
 import android.widget.VideoView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RawRes
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.offline.DownloadService.start
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import coil.load
+import coil.transform.CircleCropTransformation
+import com.example.baseproject.domain.utils.gone
+import com.example.baseproject.domain.utils.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -159,6 +166,45 @@ object MediaUtil {
         intent.type = "*/*" // Allow all media types
         intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*", "audio/*"))
         mediaLauncher.launch(intent)
+    }
+
+    fun ImageView.loadImage(
+        source: Any?,
+        onSuccess: (() -> Unit)? = null,
+        onFail: (() -> Unit)? = null,
+        defaultImage: Any? = null,
+    ) {
+        try {
+            this.load(source) {
+                listener(
+                    onStart = { request ->
+                        crossfade(true)
+                        placeholder(
+                            CircularProgressDrawable(context).apply {
+                                strokeWidth = 5f
+                                centerRadius = 30f
+                                start()
+                            },
+                        )
+                        transformations(CircleCropTransformation())
+                    },
+                    onSuccess = { request, result ->
+                        onSuccess?.invoke() ?: this@loadImage.visible()
+                    },
+                    onError = { request, result ->
+                        onFail?.invoke()
+                            ?: defaultImage?.let {
+                                this@loadImage.load(defaultImage)
+                            } ?: this@loadImage.gone()
+                    },
+                )
+            }
+        } catch (e: Exception) {
+            onFail?.invoke()
+                ?: defaultImage?.let {
+                    this@loadImage.load(defaultImage)
+                } ?: this@loadImage.gone()
+        }
     }
 }
 

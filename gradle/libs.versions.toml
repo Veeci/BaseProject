@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.2"
+coilTransformations = "2.7.0"
 converterGson = "2.11.0"
 koinAndroid = "4.0.0"
 koinBom = "3.5.4"
@@ -23,6 +24,7 @@ roomRuntime = "2.6.1"
 securityCrypto = "1.1.0-alpha06"
 timber = "5.0.1"
 exifinterface = "1.4.0-alpha01"
+swiperefreshlayout = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,6 +36,10 @@ androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx",
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
+coil = { module = "io.coil-kt:coil", version.ref = "coilTransformations" }
+coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coilTransformations" }
+coil-transformations = { module = "io.coil-kt:coil-transformations", version.ref = "coilTransformations" }
+coil-video = { module = "io.coil-kt:coil-video", version.ref = "coilTransformations" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 insert-koin-koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -55,6 +61,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
