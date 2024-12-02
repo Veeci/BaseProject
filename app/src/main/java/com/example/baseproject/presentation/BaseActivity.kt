@@ -59,6 +59,7 @@ abstract class BaseActivity<V : ViewBinding, N : BaseNavigator>(private val layo
         rootView = DataBindingUtil.inflate(layoutInflater, R.layout.activity_base, null, false)
         binding = DataBindingUtil.inflate(layoutInflater, layoutId, null, false)
 //        navController = (supportFragmentManager.findFragmentById() as NavHostFragment).navController
+        // todo
         setContentView(rootView.root)
 
         checkNetwork()
