@@ -4,15 +4,17 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.widget.Button
-import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import com.example.baseproject.R
+import com.example.baseproject.domain.utils.gone
+import com.example.baseproject.domain.utils.visible
+import com.example.baseproject.utils.MediaUtil.loadImage
 
-fun Context.lpAlert(setup: Dialog.() -> Unit) {
+fun Context.simpleAlert(setup: Dialog.() -> Unit) {
     val dialog =
         Dialog(this, R.style.AlertDialogSlideAnim).apply {
             setContentView(R.layout.layout_custom_alert_dialog)
@@ -26,40 +28,25 @@ fun Context.lpAlert(setup: Dialog.() -> Unit) {
 }
 
 fun Dialog.title(title: String) {
-    this.findViewById<TextView>(R.id.tvTitleAlert)?.apply {
+    this.findViewById<AppCompatTextView>(R.id.dialogTitle)?.apply {
         text = title
     }
 }
 
-/**
- * This setup will not change font of message.
- */
 fun Dialog.message(msg: String) {
-    this.findViewById<TextView>(R.id.tvMsgAlert)?.apply {
-        text = msg
-    }
+    this.findViewById<AppCompatTextView>(R.id.dialogMessage)?.text = msg
 }
 
-/**
- * This is exception for only message. Need change font in this case.
- * This case will hidden title message.
- * @Font : Roboto
- */
 fun Dialog.notification(msg: String) {
-    this.findViewById<TextView>(R.id.tvTitleAlert)?.visibility = View.GONE
-    this.findViewById<TextView>(R.id.tvMsgAlert)?.apply {
-        text = msg
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            typeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
-        }
-    }
+    this.findViewById<AppCompatTextView>(R.id.dialogTitle)?.gone()
+    this.findViewById<AppCompatTextView>(R.id.dialogMessage)?.text = msg
 }
 
 fun Dialog.positiveSetup(
     name: String? = null,
     click: () -> Unit,
 ) {
-    this.findViewById<Button>(R.id.positiveButton).apply {
+    this.findViewById<Button>(R.id.positiveOption).apply {
         name?.let { vl -> text = vl }
         setOnClickListener {
             click.invoke()
@@ -68,11 +55,20 @@ fun Dialog.positiveSetup(
     }
 }
 
+fun Dialog.message(imageUrl: String? = null) {
+    imageUrl?.let { url ->
+        this.findViewById<AppCompatImageView>(R.id.dialogImage).apply {
+            visible()
+            loadImage(url)
+        }
+    }
+}
+
 fun Dialog.negativeSetup(
     name: String? = null,
     click: () -> Unit,
 ) {
-    this.findViewById<Button>(R.id.negativeButton).apply {
+    this.findViewById<Button>(R.id.negativeOption).apply {
         name?.let { vl ->
             visibility = View.VISIBLE
             text = vl
