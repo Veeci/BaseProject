@@ -64,26 +64,25 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     implementation(libs.room.ktx)
 
+    // Encrypted shared preferences
+    implementation(libs.androidx.security.crypto)
+
     // Retrofit Remote
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
 
-    // Encrypted shared preferences
-    implementation(libs.androidx.security.crypto)
+    // Navigation
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 
     // ExoPLayer
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.exoplayer.dash)
     implementation(libs.androidx.media3.ui)
 
-    // Navigation
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
-
     // Coil
     implementation(libs.coil)
-    implementation(libs.coil.transformations)
-    implementation(libs.coil.gif)
-    implementation(libs.coil.video)
+
+    implementation(libs.shimmer)
 }

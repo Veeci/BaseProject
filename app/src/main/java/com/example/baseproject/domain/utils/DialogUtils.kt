@@ -1,4 +1,4 @@
-package com.example.baseproject.presentation
+package com.example.baseproject.domain.utils
 
 import android.app.Dialog
 import android.content.Context
@@ -10,8 +10,6 @@ import android.widget.Button
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import com.example.baseproject.R
-import com.example.baseproject.domain.utils.gone
-import com.example.baseproject.domain.utils.visible
 import com.example.baseproject.utils.MediaUtil.loadImage
 
 fun Context.simpleAlert(setup: Dialog.() -> Unit) {
@@ -42,7 +40,7 @@ fun Dialog.notification(msg: String) {
     this.findViewById<AppCompatTextView>(R.id.dialogMessage)?.text = msg
 }
 
-fun Dialog.positiveSetup(
+fun Dialog.positiveAction(
     name: String? = null,
     click: () -> Unit,
 ) {
@@ -50,12 +48,12 @@ fun Dialog.positiveSetup(
         name?.let { vl -> text = vl }
         setOnClickListener {
             click.invoke()
-            this@positiveSetup.dismiss()
+            this@positiveAction.dismiss()
         }
     }
 }
 
-fun Dialog.message(imageUrl: String? = null) {
+fun Dialog.image(imageUrl: String? = null) {
     imageUrl?.let { url ->
         this.findViewById<AppCompatImageView>(R.id.dialogImage).apply {
             visible()
@@ -64,7 +62,7 @@ fun Dialog.message(imageUrl: String? = null) {
     }
 }
 
-fun Dialog.negativeSetup(
+fun Dialog.negativeAction(
     name: String? = null,
     click: () -> Unit,
 ) {
@@ -77,7 +75,7 @@ fun Dialog.negativeSetup(
         }
         setOnClickListener {
             click.invoke()
-            this@negativeSetup.dismiss()
+            this@negativeAction.dismiss()
         }
     }
 }

@@ -6,10 +6,12 @@ import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
 import android.service.chooser.ChooserAction
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -37,6 +39,7 @@ import com.example.baseproject.presentation.navigation.PermissionResultEvent
 import com.example.baseproject.presentation.navigation.PopScreen
 import com.example.baseproject.presentation.navigation.SessionTimeout
 import com.example.baseproject.presentation.navigation.ShareFile
+import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -48,10 +51,15 @@ abstract class BaseActivity<V : ViewBinding, N : BaseNavigator>(private val layo
     private lateinit var rootView: ActivityBaseBinding
     lateinit var binding: V
 
+    private var isDrawerEnabled = false
+    private var drawerLayout: DrawerLayout? = null
+    private var navigationView: NavigationView? = null
+
     open var statusBarHeight = 30
     open var bottomNavigationHeight = 30
     open var networkConnected = false
-    open var onPermissionResult: ((requestCode: Int, permissions: Array<out String>, grantResults: IntArray, deviceId: Int) -> Unit)? = null
+    open var onPermissionResult: ((requestCode: Int, permissions: Array<out String>, grantResults: IntArray, deviceId: Int) -> Unit)? =
+        null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +72,12 @@ abstract class BaseActivity<V : ViewBinding, N : BaseNavigator>(private val layo
 
         checkNetwork()
         onNavigationEvent()
+
+        if (isDrawerEnabled) {
+            setupNavigationDrawer()
+        }
+
+        handleBackPress()
 
         initView(savedInstanceState = savedInstanceState, binding = binding)
     }
@@ -119,7 +133,10 @@ abstract class BaseActivity<V : ViewBinding, N : BaseNavigator>(private val layo
                                 saveState = event.saveState == false,
                             )
                         } else {
-                            LogUtils.log("onPopScreen navigation error!", "Navigation Error: BackStack is empty")
+                            LogUtils.log(
+                                "onPopScreen navigation error!",
+                                "Navigation Error: BackStack is empty",
+                            )
                         }
                     } ?: run {
                         navController?.popBackStack()
@@ -141,7 +158,10 @@ abstract class BaseActivity<V : ViewBinding, N : BaseNavigator>(private val layo
                 try {
                     // todo
                 } catch (e: Exception) {
-                    LogUtils.log("onNavigateWithDeeplink navigation error!", "Navigation Error: ${e.message}")
+                    LogUtils.log(
+                        "onNavigateWithDeeplink navigation error!",
+                        "Navigation Error: ${e.message}",
+                    )
                 }
             }
 
@@ -197,7 +217,10 @@ abstract class BaseActivity<V : ViewBinding, N : BaseNavigator>(private val layo
                 try {
                     // todo
                 } catch (e: Exception) {
-                    LogUtils.log("onSessionTimeout navigation error!", "Navigation Error: ${e.message}")
+                    LogUtils.log(
+                        "onSessionTimeout navigation error!",
+                        "Navigation Error: ${e.message}",
+                    )
                 }
             }
 
@@ -213,12 +236,20 @@ abstract class BaseActivity<V : ViewBinding, N : BaseNavigator>(private val layo
                 try {
                     // todo
                 } catch (e: Exception) {
-                    LogUtils.log("onInvalidLocalTime navigation error!", "Navigation Error: ${e.message}")
+                    LogUtils.log(
+                        "onInvalidLocalTime navigation error!",
+                        "Navigation Error: ${e.message}",
+                    )
                 }
             }
 
             is PermissionResultEvent -> {
-                onPermissionResult?.invoke(event.requestCode, event.permissions, event.grantResults, event.deviceId)
+                onPermissionResult?.invoke(
+                    event.requestCode,
+                    event.permissions,
+                    event.grantResults,
+                    event.deviceId,
+                )
             }
 
             is NotImplementedYet -> {
@@ -261,6 +292,61 @@ abstract class BaseActivity<V : ViewBinding, N : BaseNavigator>(private val layo
         }
         ThemeManager(this).currentTheme = themeMode
         window.decorView.invalidate()
+    }
+
+    fun enableNavigationDrawable(
+        enable: Boolean,
+        menuResId: Int? = null,
+    ) {
+        isDrawerEnabled = enable
+        if (enable) {
+            setupNavigationDrawer(menuResId)
+        }
+    }
+
+    private fun setupNavigationDrawer(menuResId: Int? = null) {
+        drawerLayout = findViewById(R.id.main)
+        navigationView = findViewById(R.id.navigation_menu)
+
+        menuResId?.let { navigationView?.inflateMenu(it) }
+
+        navigationView?.setNavigationItemSelectedListener { menuItem ->
+            onNavigationItemSelected(menuItem.itemId)
+            true
+        }
+    }
+
+    open fun onNavigationItemSelected(menuItemId: Int) {
+        when (menuItemId) {
+            R.id.drawer_nav_home -> {
+                LogUtils.log("NavigationDrawer", "Home selected")
+            }
+
+            R.id.drawer_nav_settings -> {
+                LogUtils.log("NavigationDrawer", "Settings selected")
+            }
+
+            R.id.drawer_nav_profiles -> {
+                LogUtils.log("NavigationDrawer", "Profiles selected")
+            }
+        }
+    }
+
+    private fun handleBackPress() {
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    navigationView?.let {
+                        if (isDrawerEnabled && drawerLayout?.isDrawerOpen(it) == true) {
+                            drawerLayout?.closeDrawer(navigationView!!)
+                        } else {
+                            finish()
+                        }
+                    }
+                }
+            },
+        )
     }
 
     abstract fun initView(
