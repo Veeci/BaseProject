@@ -111,6 +111,10 @@ abstract class BaseFragment<V : ViewBinding, N : BaseNavigator>(
         deviceId: Int,
     ) = Unit
 
+    fun showLoading(isLoading: Boolean) {
+        activity.toggleLoading(isLoading)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.errorState.removeObservers(viewLifecycleOwner)
