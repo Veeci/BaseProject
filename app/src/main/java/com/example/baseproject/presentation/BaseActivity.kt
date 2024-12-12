@@ -349,8 +349,12 @@ abstract class BaseActivity<V : ViewBinding, N : BaseNavigator>(private val layo
         )
     }
 
-    fun toggleLoading(isLoading: Boolean) {
+    fun toggleLoading(
+        isLoading: Boolean,
+        preventClicking: Boolean = false,
+    ) {
         rootView.isLoading = isLoading
+        rootView.preventClicking = preventClicking
     }
 
     abstract fun initView(

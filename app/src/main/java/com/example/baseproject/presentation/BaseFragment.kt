@@ -111,8 +111,11 @@ abstract class BaseFragment<V : ViewBinding, N : BaseNavigator>(
         deviceId: Int,
     ) = Unit
 
-    fun showLoading(isLoading: Boolean) {
-        activity.toggleLoading(isLoading)
+    fun showLoading(
+        isLoading: Boolean,
+        preventClicking: Boolean = false,
+    ) {
+        activity.toggleLoading(isLoading, preventClicking)
     }
 
     override fun onDestroyView() {
