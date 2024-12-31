@@ -16,6 +16,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import androidx.viewbinding.ViewBinding
 import com.example.baseproject.R
@@ -66,8 +67,11 @@ abstract class BaseActivity<V : ViewBinding, N : BaseNavigator>(private val layo
         enableEdgeToEdge()
         rootView = DataBindingUtil.inflate(layoutInflater, R.layout.activity_base, null, false)
         binding = DataBindingUtil.inflate(layoutInflater, layoutId, null, false)
-//        navController = (supportFragmentManager.findFragmentById() as NavHostFragment).navController
-        // todo
+
+        val navHostFragment =
+            supportFragmentManager
+                .findFragmentById(R.id.container) as NavHostFragment?
+        navController = navHostFragment?.navController
         setContentView(rootView.root)
 
         checkNetwork()
