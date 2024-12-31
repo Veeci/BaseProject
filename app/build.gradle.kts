@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("maven-publish")
     id("kotlin-kapt")
     id("kotlin-parcelize")
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
@@ -33,6 +34,12 @@ android {
         dataBinding = true
         viewBinding = true
     }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -41,6 +48,8 @@ android {
         jvmTarget = "11"
     }
 }
+
+afterEvaluate {}
 
 dependencies {
 
@@ -88,4 +97,25 @@ dependencies {
 
     // Lottie
     implementation(libs.lottie)
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            register<MavenPublication>("release") {
+                groupId = "com.veeci"
+                artifactId = "base"
+                version = "0.1.0"
+
+                afterEvaluate {
+                    from(components["release"])
+                }
+            }
+        }
+        repositories {
+            maven {
+                url = uri("https://jitpack.io")
+            }
+        }
+    }
 }
