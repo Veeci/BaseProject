@@ -39,6 +39,10 @@ android {
             withSourcesJar()
             withJavadocJar()
         }
+        singleVariant("debug") {
+            withSourcesJar()
+            withJavadocJar()
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -109,6 +113,15 @@ afterEvaluate {
 
                 afterEvaluate {
                     from(components["release"])
+                }
+            }
+            register<MavenPublication>("debug") {
+                groupId = "com.veeci"
+                artifactId = "base"
+                version = "1.0.3"
+
+                afterEvaluate {
+                    from(components["debug"])
                 }
             }
         }
