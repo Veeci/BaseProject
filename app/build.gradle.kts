@@ -105,7 +105,7 @@ afterEvaluate {
             register<MavenPublication>("release") {
                 groupId = "com.veeci"
                 artifactId = "base"
-                version = "0.1.0"
+                version = "1.0.0"
 
                 afterEvaluate {
                     from(components["release"])
