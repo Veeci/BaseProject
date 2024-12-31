@@ -107,8 +107,8 @@ afterEvaluate {
     publishing {
         publications {
             register<MavenPublication>("release") {
-                groupId = "com.veeci"
-                artifactId = "base"
+                groupId = "com.github.Veeci"
+                artifactId = "BaseProject"
                 version = "1.0.3"
 
                 afterEvaluate {
@@ -116,8 +116,8 @@ afterEvaluate {
                 }
             }
             register<MavenPublication>("debug") {
-                groupId = "com.veeci"
-                artifactId = "base"
+                groupId = "com.github.Veeci"
+                artifactId = "BaseProject"
                 version = "1.0.3"
 
                 afterEvaluate {
