@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android") version "2.0.21"
     id("maven-publish")
     id("kotlin-kapt")
     id("kotlin-parcelize")
@@ -12,11 +12,8 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.baseproject"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        multiDexEnabled = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,10 +36,6 @@ android {
             withSourcesJar()
             withJavadocJar()
         }
-        singleVariant("debug") {
-            withSourcesJar()
-            withJavadocJar()
-        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -56,51 +49,50 @@ android {
 afterEvaluate {}
 
 dependencies {
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.exifinterface)
-    implementation(libs.androidx.swiperefreshlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    api("androidx.core:core-ktx:1.15.0")
+    api("androidx.appcompat:appcompat:1.7.0")
+    api("com.google.android.material:material:1.12.0")
+    api("androidx.activity:activity:1.9.3")
+    api("androidx.constraintlayout:constraintlayout:2.2.0")
+    api("androidx.exifinterface:exifinterface:1.4.0-alpha01")
+    api("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    testApi("junit:junit:4.13.2")
+    androidTestApi("androidx.test.ext:junit:1.2.1")
+    androidTestApi("androidx.test.espresso:espresso-core:3.6.1")
 
     // Koin DI
-    implementation(libs.insert.koin.koin.android)
+    api("io.insert-koin:koin-android:4.0.0")
 
     // Room Local Database
-    implementation(libs.androidx.room.runtime)
-    kapt(libs.androidx.room.compiler)
-    implementation(libs.room.ktx)
+    api("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    api("androidx.room:room-ktx:2.6.1")
 
     // Encrypted shared preferences
-    implementation(libs.androidx.security.crypto)
+    api("androidx.security:security-crypto:1.1.0-alpha06")
 
     // Retrofit Remote
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.logging.interceptor)
+    api("com.squareup.retrofit2:retrofit:2.11.0")
+    api("com.squareup.retrofit2:converter-gson:2.11.0")
+    api("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.14")
 
     // Navigation
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
+    api("androidx.navigation:navigation-fragment-ktx:2.8.4")
+    api("androidx.navigation:navigation-ui-ktx:2.8.4")
 
-    // ExoPLayer
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.exoplayer.dash)
-    implementation(libs.androidx.media3.ui)
+    // ExoPlayer
+    api("androidx.media3:media3-exoplayer:1.5.0")
+    api("androidx.media3:media3-exoplayer-dash:1.5.0")
+    api("androidx.media3:media3-ui:1.5.0")
 
     // Coil
-    implementation(libs.coil)
+    api("io.coil-kt:coil:2.7.0")
 
     // Shimmer
-    implementation(libs.shimmer)
+    api("com.facebook.shimmer:shimmer:0.5.0")
 
     // Lottie
-    implementation(libs.lottie)
+    api("com.airbnb.android:lottie:6.4.1")
 }
 
 afterEvaluate {
@@ -109,19 +101,10 @@ afterEvaluate {
             register<MavenPublication>("release") {
                 groupId = "com.github.Veeci"
                 artifactId = "BaseProject"
-                version = "1.0.3"
+                version = "1.0.4"
 
                 afterEvaluate {
                     from(components["release"])
-                }
-            }
-            register<MavenPublication>("debug") {
-                groupId = "com.github.Veeci"
-                artifactId = "BaseProject"
-                version = "1.0.3"
-
-                afterEvaluate {
-                    from(components["debug"])
                 }
             }
         }
